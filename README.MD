@@ -38,10 +38,7 @@ docker-composer.yml
 version: '3'
 services:
   php:
-    build:
-      context: ./docker-config
-      args:
-        xdebug_remote_host: 10.254.254.254
+    image: chcjonathanguo/laravel-docker-dev:latest
     links:
       - "db:db"
     volumes:
