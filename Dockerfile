@@ -19,6 +19,10 @@ RUN apk update && \
         libpng \
         libpq \
         libwebp \
+        supervisor \
+        nginx \
+        nodejs && \
+    apk --update add --virtual build-dependencies \
         curl-dev \
         freetds-dev \
         freetype-dev \
@@ -31,9 +35,6 @@ RUN apk update && \
         libxml2-dev \
         openldap-dev \
         postgresql-dev \
-        supervisor \
-        nginx \
-        nodejs \
         zlib-dev \
         autoconf \
         build-base
@@ -66,13 +67,9 @@ RUN docker-php-ext-configure gd \
 
 # Install PECL extensions
 # see http://stackoverflow.com/a/8154466/291573) for usage of `printf`
-RUN printf "\n" | pecl install \
-        xdebug-2.6.0
-
-RUN docker-php-ext-enable \
-        xdebug
-
-RUN echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+RUN printf "\n" | pecl install xdebug-2.6.0 && \
+    docker-php-ext-enable xdebug && \
+    echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_autostart=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.default_enable=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_host=$xdebug_remote_host" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
@@ -87,22 +84,8 @@ ADD supervisor/supervisord.conf /etc/supervisord.conf
 # Download trusted certs 
 RUN mkdir -p /etc/ssl/certs && update-ca-certificates
 
-# Delete temporary dependencies
-RUN apk del curl-dev \
-    freetds-dev \
-    freetype-dev \
-    gettext-dev \
-    icu-dev \
-    jpeg-dev \
-    libmcrypt-dev \
-    libpng-dev \
-    libwebp-dev \
-    libxml2-dev \
-    openldap-dev \
-    postgresql-dev \
-    zlib-dev \
-    autoconf \
-    build-base
+# Delete build dependencies
+RUN apk del build-dependencies
 
 CMD ["supervisord", "--nodaemon"]
 
