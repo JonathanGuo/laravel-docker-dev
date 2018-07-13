@@ -68,7 +68,8 @@ RUN docker-php-ext-configure gd \
 # Install PECL extensions
 # see http://stackoverflow.com/a/8154466/291573) for usage of `printf`
 RUN printf "\n" | pecl install xdebug-2.6.0 && \
-    docker-php-ext-enable xdebug && \
+    pecl install grpc && \
+    docker-php-ext-enable xdebug grpc && \
     echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_autostart=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.default_enable=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
