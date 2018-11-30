@@ -2,32 +2,52 @@
 
 This is a image for you to quickly start running a Laravel application in docker. The image contains xdebug so you don't want to use it for production.
 
+`Composer` comes with the image.
+
+## Supported tags and respective Dockerfile links
+
+- [`latest` (Dockerfile)](https://github.com/JonathanGuo/laravel-docker-dev/blob/master/Dockerfile) - PHP-FPM 7.2 alpine
+- [`1.0` (Dockerfile)](https://github.com/JonathanGuo/laravel-docker-dev/blob/1.0/Dockerfile) - PHP-FPM 7.0 alpine
+
+## PHP Extensions
+
+- [x] bcmath
+- [x] curl
+- [x] gettext
+- [x] gd
+- [x] exif
+- [x] iconv
+- [x] intl
+- [x] ldap
+- [x] mbstring
+- [x] opcache
+- [x] pdo_mysql
+- [x] pdo_pgsql
+- [x] pdo_dblib
+- [x] soap
+- [x] sockets
+- [x] zip
+- [x] xdebug
+- [x] grpc
+- [x] memcached
+
+## Environment variables
+
+The image the environment variables below:
+
+```
+PHP_XDEBUG_REMOTE_ENABLE: on
+PHP_XDEBUG_REMOTE_AUTOSTART: on
+PHP_XDEBUG_DEFAULT_ENABLE: off
+PHP_XDEBUG_REMOTE_HOST: docker.for.mac.localhost
+PHP_XDEBUG_REMOTE_PORT: 9000
+PHP_XDEBUG_REMOTE_CONNECT_BACK: off
+PHP_XDEBUG_IDEKEY: PHPSTORM
+```
+
 ## Volumes mount
 
 `/app` - The directory the application should be mounted to
-
-
-## Enable xDebug (OSX)
-
-Since I personally develop apps in OSX, so I've created the image contains the predefined xdebug remote host. 
-
-### OSX Quirks
-
-This is a solution for using xDebug in OSX. [Read more details](https://gist.github.com/ralphschindler/535dc5916ccbd06f53c1b0ee5a868c93)
-
-For people don't want to read text, please just run the command below.
-
-```shell
-sudo curl -o /Library/LaunchDaemons/com.ralphschindler.docker_10254_alias.plist https://gist.githubusercontent.com/ralphschindler/535dc5916ccbd06f53c1b0ee5a868c93/raw/com.ralphschindler.docker_10254_alias.plist
-```
-
-After reboot you will have the alias set up.
-
-Or, you just want to try it out without rebooting or adding a startup script:
-
-```shell
-ifconfig lo0 alias 10.254.254.254
-```
 
 ### A sample usage with docker-compose
 
@@ -39,23 +59,20 @@ version: '3'
 services:
   php:
     image: chcjonathanguo/laravel-docker-dev:latest
-    links:
-      - "db:db"
     volumes:
       - ./:/app:delegated
     ports:
       - '8000:80'
-  db:
-    image: mysql:5.7
-    restart: always
     volumes:
-      - db-data:/var/lib/mysql
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
     environment:
-      MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE: app
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-    ports:
-      - '33060:3306'
-volumes:
-    db-data:
+      PHP_IDE_CONFIG: "serverName=myapp.domain"
+  nginx:
+    image: nginx:latest
+    depends_on:
+      - php
+    volumes:
+      - ./:/app:delegated
+      - ./docker-config/dev/nginx/default.conf:/etc/nginx/conf.d/default.conf
 ```

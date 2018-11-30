@@ -3,10 +3,18 @@ LABEL maintainer="jonathan <chc.jonathan.guo@outlook.com>"
 
 WORKDIR /app
 
+ENV PHP_XDEBUG_REMOTE_ENABLE=${PHP_XDEBUG_REMOTE_ENABLE:-on}
+ENV PHP_XDEBUG_REMOTE_AUTOSTART=${PHP_XDEBUG_REMOTE_AUTOSTART:-on}
+ENV PHP_XDEBUG_DEFAULT_ENABLE=${PHP_XDEBUG_DEFAULT_ENABLE:-off}
+ENV PHP_XDEBUG_REMOTE_HOST=${PHP_XDEBUG_REMOTE_HOST:-docker.for.mac.localhost}
+ENV PHP_XDEBUG_REMOTE_PORT=${PHP_XDEBUG_REMOTE_PORT:-9000}
+ENV PHP_XDEBUG_REMOTE_CONNECT_BACK=${PHP_XDEBUG_REMOTE_CONNECT_BACK:-off}
+ENV PHP_XDEBUG_IDEKEY=${PHP_XDEBUG_IDEKEY:-PHPSTORM}
+
 # Install system packages
 RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache bash \
+    apk add --no-cache \
+        bash \
         git \
         freetds \
         freetype \
@@ -14,13 +22,11 @@ RUN apk update && \
         libintl \
         libldap \
         libjpeg \
-        libmcrypt \
         libpng \
         libpq \
         libwebp \
-        supervisor \
-        nginx \
-        nodejs && \
+        libmemcached \
+        composer && \
     apk add --no-cache --virtual build-dependencies \
         curl-dev \
         freetds-dev \
@@ -28,15 +34,16 @@ RUN apk update && \
         gettext-dev \
         icu-dev \
         jpeg-dev \
-        libmcrypt-dev \
         libpng-dev \
         libwebp-dev \
         libxml2-dev \
+        libmemcached-dev \
         openldap-dev \
         postgresql-dev \
         zlib-dev \
         autoconf \
         build-base && \
+# Install PHP extensions
     docker-php-ext-configure gd \
         --with-freetype-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
@@ -44,37 +51,35 @@ RUN apk update && \
     docker-php-ext-configure ldap --with-libdir=lib/ && \
     docker-php-ext-configure pdo_dblib --with-libdir=lib/ && \
     docker-php-ext-install \
+        bcmath \
         curl \
-        exif \
-        gd \
         gettext \
+        gd \
+        exif \
+        iconv \
         intl \
+        ldap \
+        mbstring \
         opcache \
         pdo_mysql \
         pdo_pgsql \
         pdo_dblib \
         soap \
+        sockets \
         zip && \
-    pecl install xdebug && \
-    pecl install grpc && \
-    docker-php-ext-enable xdebug grpc && \
-    echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.remote_autostart=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.default_enable=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.remote_host=docker.for.mac.localhost" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.remote_port=9005" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.remote_connect_back=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+# Install PECL extensions
+    pecl install xdebug grpc memcached && \
+    docker-php-ext-enable xdebug grpc memcached && \
+    echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.remote_autostart=${PHP_XDEBUG_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.default_enable=${PHP_XDEBUG_DEFAULT_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.remote_host=${PHP_XDEBUG_REMOTE_HOST}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.remote_port=${PHP_XDEBUG_REMOTE_PORT}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.remote_connect_back=${PHP_XDEBUG_REMOTE_CONNECT_BACK}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    echo "xdebug.idekey=${PHP_XDEBUG_IDEKEY}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_log=/tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    apk del build-dependencies
-
-ADD nginx/nginx.conf /etc/nginx/nginx.conf
-ADD supervisor/supervisord.conf /etc/supervisord.conf
-
+    apk del build-dependencies && \
 # Download trusted certs 
-RUN mkdir -p /etc/ssl/certs && update-ca-certificates
+    mkdir -p /etc/ssl/certs && update-ca-certificates
 
-CMD ["supervisord", "--nodaemon"]
-
-EXPOSE 80
+ADD config/php.ini /usr/local/etc/php/php.ini
