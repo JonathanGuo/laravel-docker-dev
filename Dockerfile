@@ -82,4 +82,9 @@ RUN apk update && \
 # Download trusted certs 
     mkdir -p /etc/ssl/certs && update-ca-certificates
 
-ADD config/php.ini /usr/local/etc/php/php.ini
+COPY config/php.ini /usr/local/etc/php/php.ini
+COPY config/entrypoint.sh /entrypoint.sh
+
+RUN chmod a+x /entrypoint.sh
+
+ENTRYPOINT [ "/entrypoint.sh" ]
