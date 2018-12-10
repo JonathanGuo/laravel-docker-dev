@@ -11,6 +11,8 @@ ENV PHP_XDEBUG_REMOTE_PORT=${PHP_XDEBUG_REMOTE_PORT:-9000}
 ENV PHP_XDEBUG_REMOTE_CONNECT_BACK=${PHP_XDEBUG_REMOTE_CONNECT_BACK:-off}
 ENV PHP_XDEBUG_IDEKEY=${PHP_XDEBUG_IDEKEY:-PHPSTORM}
 
+COPY config /tmp/config
+
 # Install system packages
 RUN apk update && \
     apk add --no-cache \
@@ -79,12 +81,11 @@ RUN apk update && \
     echo "xdebug.idekey=${PHP_XDEBUG_IDEKEY}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_log=/tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     apk del build-dependencies && \
-# Download trusted certs 
-    mkdir -p /etc/ssl/certs && update-ca-certificates
-
-COPY config/php.ini /usr/local/etc/php/php.ini
-COPY config/entrypoint.sh /entrypoint.sh
-
-RUN chmod a+x /entrypoint.sh
+# Download trusted certs
+    mkdir -p /etc/ssl/certs && update-ca-certificates && \
+    cp /tmp/config/php.ini /usr/local/etc/php/php.ini && \
+    cp /tmp/config/entrypoint.sh /entrypoint.sh && \
+    rm -rf /tmp/config && \
+    chmod a+x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
