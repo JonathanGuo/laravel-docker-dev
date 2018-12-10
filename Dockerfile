@@ -28,7 +28,8 @@ RUN apk update && \
         libpq \
         libwebp \
         libmemcached \
-        composer && \
+        composer \
+        nodejs && \
     apk add --no-cache --virtual build-dependencies \
         curl-dev \
         freetds-dev \
