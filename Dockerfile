@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-alpine
+FROM php:7.3-fpm-alpine
 LABEL maintainer="jonathan <chc.jonathan.guo@outlook.com>"
 
 WORKDIR /app
@@ -29,6 +29,7 @@ RUN apk update && \
         libwebp \
         libmemcached \
         supervisor \
+        libzip \
         composer && \
     apk add --no-cache --virtual build-dependencies \
         curl-dev \
@@ -40,14 +41,15 @@ RUN apk update && \
         libpng-dev \
         libwebp-dev \
         libxml2-dev \
+        libzip-dev \
         libmemcached-dev \
         openldap-dev \
         postgresql-dev \
         zlib-dev \
         autoconf \
-        build-base && \
+        build-base
 # Install PHP extensions
-    docker-php-ext-configure gd \
+RUN docker-php-ext-configure gd \
         --with-freetype-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-jpeg-dir=/usr/include/ && \
@@ -68,11 +70,11 @@ RUN apk update && \
         pdo_dblib \
         soap \
         sockets \
-        zip && \
+        zip
 # Install PECL extensions
-    pecl install xdebug grpc memcached && \
-    docker-php-ext-enable xdebug grpc memcached && \
-    echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+RUN pecl install xdebug-2.7.0beta1 grpc memcached && \
+    docker-php-ext-enable xdebug grpc memcached
+RUN echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_autostart=${PHP_XDEBUG_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.default_enable=${PHP_XDEBUG_DEFAULT_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_host=${PHP_XDEBUG_REMOTE_HOST}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
