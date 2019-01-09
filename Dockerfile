@@ -28,6 +28,7 @@ RUN apk update && \
         libpq \
         libwebp \
         libmemcached \
+        supervisor \
         composer && \
     apk add --no-cache --virtual build-dependencies \
         curl-dev \
@@ -62,7 +63,6 @@ RUN apk update && \
         intl \
         ldap \
         mbstring \
-        opcache \
         pdo_mysql \
         pdo_pgsql \
         pdo_dblib \
@@ -83,9 +83,18 @@ RUN apk update && \
     apk del build-dependencies && \
 # Download trusted certs
     mkdir -p /etc/ssl/certs && update-ca-certificates && \
+# Copy php configuration
     cp /tmp/config/php.ini /usr/local/etc/php/php.ini && \
+# Copy supervisor config
+    mkdir /etc/supervisor.d && \
+    cp /tmp/config/supervisord.conf /etc/supervisord.conf && \
+    cp -r /tmp/config/supervisor.d /etc && \
+# Copy cron job
+    cp /tmp/config/crontab /etc/crontabs/root && \
     cp /tmp/config/entrypoint.sh /entrypoint.sh && \
     rm -rf /tmp/config && \
     chmod a+x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
