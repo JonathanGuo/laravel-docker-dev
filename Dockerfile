@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-alpine
+FROM php:7.1-fpm-alpine
 LABEL maintainer="jonathan <chc.jonathan.guo@outlook.com>"
 
 WORKDIR /app
