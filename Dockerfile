@@ -30,7 +30,12 @@ RUN apk update && \
         libmemcached \
         composer \
         nodejs \
-        npm && \
+        npm \
+        # Chromium dependencies
+        chromium \
+        harfbuzz \
+        nss \
+        && \
     apk add --no-cache --virtual build-dependencies \
         curl-dev \
         freetds-dev \
@@ -88,6 +93,7 @@ RUN apk update && \
     cp /tmp/config/php.ini /usr/local/etc/php/php.ini && \
     cp /tmp/config/entrypoint.sh /entrypoint.sh && \
     rm -rf /tmp/config && \
+    rm -rf /var/cache/* && \
     chmod a+x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
