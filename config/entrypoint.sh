@@ -8,6 +8,7 @@ if [ "${1#-}" != "$1" ]; then
 fi
 
 # Change storage folder's ownership since php-fpm's default user is www-data
+mkdir -p /app/storage
 chown -R www-data:www-data /app/storage
 
 # Start php-fpm
