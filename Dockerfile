@@ -9,4 +9,6 @@ RUN apk update && \
         # Chromium dependencies
         chromium \
         harfbuzz \
-        nss
+        nss \
+        fontconfig \
+        ttf-freefont
