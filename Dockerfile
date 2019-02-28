@@ -72,7 +72,7 @@ RUN docker-php-ext-configure gd \
         sockets \
         zip
 # Install PECL extensions
-RUN pecl install xdebug-2.7.0beta1 grpc memcached && \
+RUN pecl install xdebug-2.7.0RC2 grpc memcached && \
     docker-php-ext-enable xdebug grpc memcached
 RUN echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_autostart=${PHP_XDEBUG_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
