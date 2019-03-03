@@ -1,4 +1,4 @@
-FROM chcjonathanguo/laravel-docker-dev:7.2-with-nodejs
+FROM chcjonathanguo/laravel-docker-dev:7.3-with-nodejs
 LABEL maintainer="jonathan <chc.jonathan.guo@outlook.com>"
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=${PUPPETEER_SKIP_CHROMIUM_DOWNLOAD:-true}
