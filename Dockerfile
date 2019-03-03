@@ -1,4 +1,4 @@
-FROM chcjonathanguo/laravel-docker-dev:7.2
+FROM chcjonathanguo/laravel-docker-dev:7.3
 LABEL maintainer="jonathan <chc.jonathan.guo@outlook.com>"
 
 # Install system packages
