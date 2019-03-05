@@ -47,9 +47,9 @@ RUN apk update && \
         postgresql-dev \
         zlib-dev \
         autoconf \
-        build-base
+        build-base && \
 # Install PHP extensions
-RUN docker-php-ext-configure gd \
+    docker-php-ext-configure gd \
         --with-freetype-dir=/usr/include/ \
         --with-png-dir=/usr/include/ \
         --with-jpeg-dir=/usr/include/ && \
@@ -70,11 +70,11 @@ RUN docker-php-ext-configure gd \
         pdo_dblib \
         soap \
         sockets \
-        zip
+        zip && \
 # Install PECL extensions
-RUN pecl install xdebug-2.7.0RC2 grpc memcached && \
-    docker-php-ext-enable xdebug grpc memcached
-RUN echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
+    pecl install xdebug-2.7.0RC2 grpc memcached && \
+    docker-php-ext-enable xdebug grpc memcached && \
+    echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_autostart=${PHP_XDEBUG_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.default_enable=${PHP_XDEBUG_DEFAULT_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_host=${PHP_XDEBUG_REMOTE_HOST}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
