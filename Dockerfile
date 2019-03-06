@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-alpine
+FROM php:7.3-fpm-alpine
 LABEL maintainer="jonathan <chc.jonathan.guo@outlook.com>"
 
 WORKDIR /app
@@ -10,6 +10,8 @@ ENV PHP_XDEBUG_REMOTE_HOST=${PHP_XDEBUG_REMOTE_HOST:-docker.for.mac.localhost}
 ENV PHP_XDEBUG_REMOTE_PORT=${PHP_XDEBUG_REMOTE_PORT:-9000}
 ENV PHP_XDEBUG_REMOTE_CONNECT_BACK=${PHP_XDEBUG_REMOTE_CONNECT_BACK:-off}
 ENV PHP_XDEBUG_IDEKEY=${PHP_XDEBUG_IDEKEY:-PHPSTORM}
+ENV ENABLE_CRON_JOB=${ENABLE_CRON_JOB:-false}
+ENV ENABLE_LARAVEL_WORKER=${ENABLE_LARAVEL_WORKER:-false}
 
 COPY config /tmp/config
 
@@ -29,6 +31,7 @@ RUN apk update && \
         libwebp \
         libmemcached \
         supervisor \
+        libzip \
         composer && \
     apk add --no-cache --virtual build-dependencies \
         curl-dev \
@@ -40,6 +43,7 @@ RUN apk update && \
         libpng-dev \
         libwebp-dev \
         libxml2-dev \
+        libzip-dev \
         libmemcached-dev \
         openldap-dev \
         postgresql-dev \
@@ -70,7 +74,7 @@ RUN apk update && \
         sockets \
         zip && \
 # Install PECL extensions
-    pecl install xdebug grpc memcached && \
+    pecl install xdebug-2.7.0 grpc memcached && \
     docker-php-ext-enable xdebug grpc memcached && \
     echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_autostart=${PHP_XDEBUG_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \

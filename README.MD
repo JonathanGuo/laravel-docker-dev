@@ -6,7 +6,11 @@ This is a image for you to quickly start running a Laravel application in docker
 
 ## Supported tags and respective Dockerfile links
 
-- [`latest` (Dockerfile)](https://github.com/JonathanGuo/laravel-docker-dev/blob/master/Dockerfile) - PHP-FPM 7.2 alpine
+- [`latest` (Dockerfile)](https://github.com/JonathanGuo/laravel-docker-dev/blob/master/Dockerfile) - PHP-FPM 7.3 alpine
+- [`7.3` (Dockerfile)](https://github.com/JonathanGuo/laravel-docker-dev/blob/7.3/Dockerfile) - PHP-FPM 7.3 alpine
+- [`7.2` (Dockerfile)](https://github.com/JonathanGuo/laravel-docker-dev/blob/7.2/Dockerfile) - PHP-FPM 7.2 alpine
+
+### Deprecated
 - [`1.0` (Dockerfile)](https://github.com/JonathanGuo/laravel-docker-dev/blob/1.0/Dockerfile) - PHP-FPM 7.0 alpine
 
 ## PHP Extensions
@@ -43,6 +47,8 @@ PHP_XDEBUG_REMOTE_HOST: docker.for.mac.localhost
 PHP_XDEBUG_REMOTE_PORT: 9000
 PHP_XDEBUG_REMOTE_CONNECT_BACK: off
 PHP_XDEBUG_IDEKEY: PHPSTORM
+ENABLE_CRON_JOB: false
+ENABLE_LARAVEL_WORKER: false
 ```
 
 ## Volumes mount
