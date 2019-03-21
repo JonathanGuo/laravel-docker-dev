@@ -10,5 +10,8 @@ RUN apk update && \
         chromium \
         harfbuzz \
         nss \
+        msttcorefonts-installer \
         fontconfig \
-        ttf-freefont
+        ttf-freefont && \
+        update-ms-fonts && \
+        fc-cache -f
