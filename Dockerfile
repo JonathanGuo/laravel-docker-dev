@@ -74,7 +74,7 @@ RUN apk update && \
         sockets \
         zip && \
 # Install PECL extensions
-    pecl install xdebug-2.7.0 grpc memcached && \
+    pecl install xdebug-2.7.1 grpc memcached && \
     docker-php-ext-enable xdebug grpc memcached && \
     echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_autostart=${PHP_XDEBUG_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
