@@ -12,6 +12,7 @@ ENV PHP_XDEBUG_REMOTE_CONNECT_BACK=${PHP_XDEBUG_REMOTE_CONNECT_BACK:-off}
 ENV PHP_XDEBUG_IDEKEY=${PHP_XDEBUG_IDEKEY:-PHPSTORM}
 ENV ENABLE_CRON_JOB=${ENABLE_CRON_JOB:-false}
 ENV ENABLE_LARAVEL_WORKER=${ENABLE_LARAVEL_WORKER:-false}
+ENV ENV_ENABLE_LARAVEL_HORIZON=${ENV_ENABLE_LARAVEL_HORIZON:-false}
 
 COPY config /tmp/config
 
@@ -72,9 +73,10 @@ RUN apk update && \
         pdo_dblib \
         soap \
         sockets \
-        zip && \
+        zip \
+        pcntl && \
 # Install PECL extensions
-    pecl install xdebug-2.7.1 grpc memcached && \
+    pecl install xdebug-2.7.2 grpc memcached && \
     docker-php-ext-enable xdebug grpc memcached && \
     echo "xdebug.remote_enable=${PHP_XDEBUG_REMOTE_ENABLE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
     echo "xdebug.remote_autostart=${PHP_XDEBUG_REMOTE_AUTOSTART}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
