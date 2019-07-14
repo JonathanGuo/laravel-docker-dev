@@ -38,7 +38,7 @@ This is a image for you to quickly start running a Laravel application in docker
 
 ## Environment variables
 
-The image the environment variables below:
+This image supports the environment variables below:
 
 ```
 PHP_XDEBUG_REMOTE_ENABLE: on
@@ -50,7 +50,7 @@ PHP_XDEBUG_REMOTE_CONNECT_BACK: off
 PHP_XDEBUG_IDEKEY: PHPSTORM
 ENABLE_CRON_JOB: false
 ENABLE_LARAVEL_WORKER: false
-ENV_ENABLE_LARAVEL_HORIZON: false
+ENABLE_LARAVEL_HORIZON: false
 ```
 
 ## Volumes mount
